@@ -35,12 +35,7 @@ The player documents stored in MongoDb have fairly simple schema.
  * update player high scores
  * add friends
  * view the global leaderboard
- 
- That said, the executable doesn't accept any args so you'll have to comment/uncomment the action you want to take. 
 
 ### Todo: 
-* add command line arguments
-* add help info to the executable
 * add the ability to change the mongoDB host/port
-* sort out a few async issues with the Leaderboard
 * add friend leaderboards
