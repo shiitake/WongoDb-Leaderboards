@@ -9,21 +9,21 @@ namespace WongoDb.Collections
 {
     public static class LeaderBoardAction
     {
-        public static async void GenerateLeaderBoardGlobal()
+        public static void GenerateLeaderBoardGlobal()
         {
             MongoClient client = new MongoClient();
             var db = client.GetDatabase("LeaderBoard");
             var collection = db.GetCollection<Player>("Player");
-            var scoreList = await collection.Find(_ => true)
+            var scoreList = collection.Find(_ => true)
                 .SortByDescending(x => x.HighScore.Score)
                 .Limit(10)
-                .ToListAsync();
+                .ToListAsync().Result;
 
-            Console.WriteLine("Global Leaderboard: ");
-            Console.WriteLine("Score\t\tUsername\t\tDate");
+            Console.WriteLine("{0,-10}{1,-25}{2,-15}", "Score","Username","Date");
+            Console.WriteLine("{0}{0}{0}{0}{0}{0}", "==========");
             foreach (var score in scoreList)
             {
-                Console.WriteLine("{0}\t\t{1}\t\t{2}", score.HighScore.Score, score.UserName, score.HighScore.DatePlayed);
+                Console.WriteLine("{0,-10}{1,-25}{2,-15}", score.HighScore.Score, score.UserName, score.HighScore.DatePlayed);
             }
         }
 
