@@ -1,0 +1,11 @@
+C:\Git\WongoDb\WongoDb\bin\Debug\WongoDb.exe.config
+C:\Git\WongoDb\WongoDb\bin\Debug\WongoDb.exe
+C:\Git\WongoDb\WongoDb\bin\Debug\WongoDb.pdb
+C:\Git\WongoDb\WongoDb\bin\Debug\MongoDB.Bson.dll
+C:\Git\WongoDb\WongoDb\bin\Debug\MongoDB.Driver.Core.dll
+C:\Git\WongoDb\WongoDb\bin\Debug\MongoDB.Driver.dll
+C:\Git\WongoDb\WongoDb\bin\Debug\MongoDB.Bson.xml
+C:\Git\WongoDb\WongoDb\bin\Debug\MongoDB.Driver.xml
+C:\Git\WongoDb\WongoDb\obj\Debug\WongoDb.csprojResolveAssemblyReference.cache
+C:\Git\WongoDb\WongoDb\obj\Debug\WongoDb.exe
+C:\Git\WongoDb\WongoDb\obj\Debug\WongoDb.pdb
