@@ -35,7 +35,8 @@ The player documents stored in MongoDb have fairly simple schema.
  * update player high scores
  * add friends
  * view the global leaderboard
+ * set the MongoDB host/port
+ * use MongoDB database authentication
 
 ### Todo: 
-* add the ability to change the mongoDB host/port
 * add friend leaderboards
