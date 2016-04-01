@@ -7,12 +7,22 @@ using MongoDB.Driver;
 
 namespace WongoDb.Collections
 {
-    public static class LeaderBoardAction
+    public class LeaderBoardAction
     {
-        public static void GenerateLeaderBoardGlobal()
+        private MongoClientSettings _settings;
+        private readonly string _database;
+
+        public LeaderBoardAction(MongoClientSettings settings, string database)
         {
-            MongoClient client = new MongoClient();
-            var db = client.GetDatabase("LeaderBoard");
+            _settings = settings;
+            _database = database;
+
+        }
+
+        public void GenerateLeaderBoardGlobal()
+        {
+            MongoClient client = new MongoClient(_settings);
+            var db = client.GetDatabase(_database);
             var collection = db.GetCollection<Player>("Player");
             var scoreList = collection.Find(_ => true)
                 .SortByDescending(x => x.HighScore.Score)
@@ -27,7 +37,7 @@ namespace WongoDb.Collections
             }
         }
 
-        public static void GenerateLeaderBoardByPlayer(Player player)
+        public void GenerateLeaderBoardByPlayer(Player player)
         {
             
         }

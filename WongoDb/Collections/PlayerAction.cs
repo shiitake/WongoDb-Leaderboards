@@ -9,9 +9,18 @@ using WongoDb.Helpers;
 
 namespace WongoDb.Collections
 {
-    public static class PlayerAction
+    public class PlayerAction
     {
-        public static void CreateNewPlayer(string username, string first, string last, string email)
+        private MongoClientSettings _settings;
+        private readonly string _database;
+
+        public PlayerAction(MongoClientSettings settings, string database)
+        {
+            _settings = settings;
+            _database = database;
+        }
+
+        public void CreateNewPlayer(string username, string first, string last, string email)
         {
             var alreadyExists = DoesPlayerExist(username);
 
@@ -31,38 +40,38 @@ namespace WongoDb.Collections
                     HighScore = new HighScore { Score = 0}
                 };
 
-                MongoClient client = new MongoClient();
-                var db = client.GetDatabase("LeaderBoard");
+                MongoClient client = new MongoClient(_settings);
+                var db = client.GetDatabase(_database);
                 var collection = db.GetCollection<Player>("Player");
                 collection.InsertOneAsync(player);
                 Console.WriteLine("Created new player: " + player.UserName);
             }
         }
 
-        public static async Task<bool>  DoesPlayerExist(string username)
+        public async Task<bool>  DoesPlayerExist(string username)
         {
-            MongoClient client = new MongoClient();
-            var db = client.GetDatabase("LeaderBoard");
+            MongoClient client = new MongoClient(_settings);
+            var db = client.GetDatabase(_database);
             var collection = db.GetCollection<Player>("Player");
 
             var playerList = await collection.Find(player => player.UserName == username).ToListAsync();
             return playerList.Any();
         }
 
-        public static List<Player> GetPlayers()
+        public List<Player> GetPlayers()
         {
-            MongoClient client = new MongoClient();
-            var db = client.GetDatabase("LeaderBoard");
+            MongoClient client = new MongoClient(_settings);
+            var db = client.GetDatabase(_database);
             var collection = db.GetCollection<Player>("Player");
 
             return collection.Find(_ => true).ToListAsync().Result;
 
         }
 
-        public static async Task<Player> GetPlayerByUsername(string username)
+        public async Task<Player> GetPlayerByUsername(string username)
         {
-            MongoClient client = new MongoClient();
-            var db = client.GetDatabase("LeaderBoard");
+            MongoClient client = new MongoClient(_settings);
+            var db = client.GetDatabase(_database);
             var collection = db.GetCollection<Player>("Player");
 
             var player = await collection.Find(p => p.UserName == username).ToListAsync();
@@ -70,10 +79,10 @@ namespace WongoDb.Collections
 
         }
 
-        public static void UpdatePlayerHighScore(Player player, int score)
+        public void UpdatePlayerHighScore(Player player, int score)
         {
-            MongoClient client = new MongoClient();
-            var db = client.GetDatabase("LeaderBoard");
+            MongoClient client = new MongoClient(_settings);
+            var db = client.GetDatabase(_database);
             var playerCollection = db.GetCollection<Player>("Player");
             player.HighScore.Score = score;
             player.HighScore.DatePlayed = DateTime.Now;
@@ -81,20 +90,20 @@ namespace WongoDb.Collections
             playerCollection.SaveAsync(player).Wait();
         }
 
-        public static async Task<string> GetPlayerUserName(ObjectId playerId)
+        public async Task<string> GetPlayerUserName(ObjectId playerId)
         {
-            MongoClient client = new MongoClient();
-            var db = client.GetDatabase("LeaderBoard");
+            MongoClient client = new MongoClient(_settings);
+            var db = client.GetDatabase(_database);
             var collection = db.GetCollection<Player>("Player");
 
             var player = await collection.Find(p => p.Id == playerId).ToListAsync();
             return player.Any() ? player.First().UserName : "Unknown";
         }
 
-        public static void AddPlayerFriend(Player player, string friend)
+        public void AddPlayerFriend(Player player, string friend)
         {
-            MongoClient client = new MongoClient();
-            var db = client.GetDatabase("LeaderBoard");
+            MongoClient client = new MongoClient(_settings);
+            var db = client.GetDatabase(_database);
             var playerCollection = db.GetCollection<Player>("Player");
             var newFriend = new Friend
             {

@@ -10,13 +10,23 @@ namespace WongoDb.Services
 {
     public class MongoService
     {
-        string _host;
-        int _port;
+        private PlayerAction _player;
+        private LeaderBoardAction _leader;
+        private MongoClientSettings _settings;
 
-        public MongoService(string host, int port)
+        public MongoService(string host, int port, string database, string username = "", string password = "")
         {
-            _host = host;
-            _port = port;
+            _settings = new MongoClientSettings();
+            _settings.Server = new MongoServerAddress(host, port);
+
+            if (!string.IsNullOrWhiteSpace(username) && !string.IsNullOrWhiteSpace(password))
+            {
+                var credential = MongoCredential.CreateCredential(database, username, password);
+                _settings.Credentials = new[] {credential};
+            }
+
+            _player = new PlayerAction(_settings, database);
+            _leader = new LeaderBoardAction(_settings, database);
         }
 
         public void Start(MongoServiceOptions option)
@@ -50,13 +60,9 @@ namespace WongoDb.Services
             Console.WriteLine("Please enter email: ");
             var email = Console.ReadLine();
             //Todo: Add some sort of validation
-            //string username = "shiitake",
-            //    first = "Shannon",
-            //    last = "Barrett",
-            //    email = "sbarrett00@live.com";
 
             Console.WriteLine("Creating new player.");
-            PlayerAction.CreateNewPlayer(username, first, last, email);
+            _player.CreateNewPlayer(username, first, last, email);
         }
 
         private void AddGame()
@@ -72,7 +78,7 @@ namespace WongoDb.Services
                 Console.WriteLine("You entered an invalid score.");
             }
             //get player
-            var pa = PlayerAction.GetPlayerByUsername(username);
+            var pa = _player.GetPlayerByUsername(username);
             
             if (score < pa.Result.HighScore.Score)
             {
@@ -81,7 +87,7 @@ namespace WongoDb.Services
             else
             {
                 Console.WriteLine("Congrats on your new high score. You're really moving up the leaderboards.");
-                PlayerAction.UpdatePlayerHighScore(pa.Result, score);
+                _player.UpdatePlayerHighScore(pa.Result, score);
             }
 
         }
@@ -92,7 +98,7 @@ namespace WongoDb.Services
             var username = Console.ReadLine();
             Console.WriteLine("Please enter the name of the friend you would like to add: ");
             var friend = Console.ReadLine();
-            var isValidPlayer = PlayerAction.DoesPlayerExist(friend);
+            var isValidPlayer = _player.DoesPlayerExist(friend);
             if (!isValidPlayer.Result)
             {
                 Console.WriteLine("We can't find a player by that name.");
@@ -100,8 +106,8 @@ namespace WongoDb.Services
             else
             {
                 Console.WriteLine("Congratulations, You've got a new friend");
-                var pa = PlayerAction.GetPlayerByUsername(username);
-                PlayerAction.AddPlayerFriend(pa.Result, friend);
+                var pa = _player.GetPlayerByUsername(username);
+                _player.AddPlayerFriend(pa.Result, friend);
             }
         }
 
@@ -112,13 +118,13 @@ namespace WongoDb.Services
             if (string.IsNullOrWhiteSpace(userName))
             {
                 Console.WriteLine("Printing global leaderboards");
-                LeaderBoardAction.GenerateLeaderBoardGlobal();
+                _leader.GenerateLeaderBoardGlobal();
             }
             else
             {
                 Console.WriteLine("Printing leaderboards for {0}", userName);
-                var pa = PlayerAction.GetPlayerByUsername(userName);
-                LeaderBoardAction.GenerateLeaderBoardByPlayer(pa.Result);
+                var pa = _player.GetPlayerByUsername(userName);
+                _leader.GenerateLeaderBoardByPlayer(pa.Result);
             }
         }
 

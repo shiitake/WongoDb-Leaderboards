@@ -19,27 +19,68 @@ namespace WongoDb
                 PrintHelp();
                 return;
             }
+            var host = "localhost";
+            var port = 27017;
+            var database = "LeaderBoard";
+            var username = "";
+            var password = "";
+            MongoServiceOptions action = MongoServiceOptions.LeaderBoard;
+            var validPort = true;
 
-            var svc = new MongoService("http://localhost", 27017);
-            switch (args[0])
+            for (var i = 0; i < args.Length; i++)
             {
-                case "-new":
-                case "-n":
-                    svc.Start(MongoServiceOptions.AddUser);
-                    break;
-                case "-friend":
-                case "-f":
-                    svc.Start(MongoServiceOptions.AddFriend);
-                    break;
-                case "-score":
-                case "-s":
-                    svc.Start(MongoServiceOptions.AddHighScore);
-                    break;
-                case "-leader":
-                case "-l":
-                    svc.Start(MongoServiceOptions.LeaderBoard);
-                    break;
+                switch (args[i].ToLower())
+                {
+                    case "-new":
+                    case "-n":
+                        action = MongoServiceOptions.AddUser;
+                        break;
+                    case "-friend":
+                    case "-f":
+                        action = MongoServiceOptions.AddFriend;
+                        break;
+                    case "-highscore":
+                    case "-h":
+                        action = MongoServiceOptions.AddHighScore;
+                        break;
+                    case "-leader":
+                    case "-l":
+                        action = MongoServiceOptions.LeaderBoard;
+                        break;
+                    case "-server":
+                    case "-s":
+                        host = args[i + 1];
+                        break;
+                    case "-port":
+                    case "-p":
+                        validPort = int.TryParse(args[i + 1], out port);
+                        break;
+                    case "-database":
+                    case "-d":
+                        database = args[i + 1];
+                        break;
+                    case "-username":
+                    case "-u":
+                        username = args[i + 1];
+                        break;
+                    case "-password":
+                    case "-pw":
+                        password = args[i + 1];
+                        break;
+                    case "-?":
+                    case "-help":
+                        PrintHelp();
+                        break;
+                }
             }
+
+            if (!validPort)
+            {
+                Console.WriteLine("Please input a valid port number");
+                return;
+            }
+            var svc = new MongoService(host, port, database, username, password);
+            svc.Start(action);
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
@@ -48,15 +89,19 @@ namespace WongoDb
 
         public static void PrintHelp()
         {
-            Console.WriteLine("WongoDB.exe will let you add players, friends, and new highscores. It uses MongoDB running on localhost, port 27017");
-            Console.WriteLine();
-            Console.WriteLine("Usage:" + "\t" + "WongoDB.exe [-n] [-f] [-s] [-l]");
+            Console.WriteLine("WongoDB.exe will let you add players, friends, and new highscores. It defaults to MongoDB running on localhost, port 27017 but you can configure manually");Console.WriteLine();
+            Console.WriteLine("Usage:" + "\t" + "WongoDB.exe [-n] [-f] [-h] [-l] [-s] [-p] [d] [u] [p]");
             Console.WriteLine();
             Console.WriteLine("Options:");
             Console.WriteLine("\t-new, -n" + "\t\t" + "Add a new Player");
             Console.WriteLine("\t-friend, -f" + "\t\t" + "Add an existing player to your friend list");
-            Console.WriteLine("\t-score, -s" + "\t\t" + "Update your high score");
+            Console.WriteLine("\t-highscore, -h" + "\t\t" + "Update your high score");
             Console.WriteLine("\t-leaderboard, -l" + "\t\t" + "View the leaderboards");
+            Console.WriteLine("\t-server, -s" + "\t\t" + "Set the MongoDB server (default localhost)");
+            Console.WriteLine("\t-port, -p" + "\t\t" + "Set the MongoDB port (default 27017)");
+            Console.WriteLine("\t-database, -d" + "\t\t" + "Set the MongoDB database (default LeaderBoard)");
+            Console.WriteLine("\t-user, -u" + "\t\t" + "Set username (default: not required)");
+            Console.WriteLine("\t-password, -pw" + "\t\t" + "Set password (default: not required)");
         }
 
 
