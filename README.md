@@ -5,10 +5,7 @@ A small console app that uses MongoDb to store player and leaderboard data.
 
 1. If you've got MongoDb installed locally you can just run the program (it automatically points to localhost on port 27017)
 
-2. If you have Vagrant and Virtualbox installed you can just up a new machine.  
-```
-vagrant up
-```
+2. If you have Vagrant and Virtualbox installed you can just up a new machine: `vagrant up`
 3. You can specify a host, port, username and password through the command line.
 ```
 WongoDb -server <server> -p <port> -database <database> -user <username> -pw <password>
