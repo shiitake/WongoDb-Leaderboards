@@ -1,7 +1,18 @@
 # WongoDb-Leaderboards
 A small console app that uses MongoDb to store player and leaderboard data. 
 
-To run this locally you will need to have MongoDb running locally on the default port 27017. 
+### There are a few ways to run the project: 
+
+1. If you've got MongoDb installed locally you can just run the program (it automatically points to localhost on port 27017)
+
+2. If you have Vagrant and Virtualbox installed you can just up a new machine.  
+```
+vagrant up
+```
+3. You can specify a host, port, username and password through the command line.
+```
+WongoDb -server <server> -p <port> -database <database> -user <username> -pw <password>
+```
 
 The player documents stored in MongoDb have fairly simple schema.
 
